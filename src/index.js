@@ -1,17 +1,24 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from 'react'
+import Cookies from "js-cookie"
+import ReactDOM from "react-dom"
+import {createStore} from "redux"
+import {Provider} from "react-redux"
+import reducers from "./reducers"
+import {login} from "./actions"
+import api from "./api"
+import App from "./App"
+
+const store = createStore(reducers)
+const localToken = Cookies.get('token')
+
+if (localToken) {
+  store.dispatch(login(localToken))
+  api.defaults.headers.common['Authorization'] = localToken
+}
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <Provider store={store}>
+    <App/>
+  </Provider>,
   document.getElementById('root')
-);
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+)
